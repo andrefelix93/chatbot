@@ -1,0 +1,85 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block content %}
+
+    
+        <h1 class="mt-2">Chamados Abertos</h1>
+        
+        <div class="card mb-4">
+            
+            <div class="card-body ">
+                <p class="mb-0">
+                    <table class="w3-table-all w3-hoverable w3-card-4">
+                        {% csrf_token %}
+                        {% if tem_chamado.exists %}
+                            <tr>
+                                <th>ID</th>
+                                <th>Telefone</th>
+                                <th>Mensagem</th>
+                                <th>Status</th>
+                                <th>Botões</th>
+                            </tr>
+                            {% for c in chamado %}  
+                                {% if c.encerrado is False %}
+                                    <tr>
+                                        <td>{{c.id}}</td>
+                                        <td>{{c.telefone}}</td>
+                                        <td>{{c.mensagem}}</td>
+                                        <td>{{c.status}}</td>
+                                        <td align="center" style="white-space: nowrap;">
+                                            <span>
+                                                <a href="https://api.whatsapp.com/send?phone={{c.telefone}}&text={{c.mensagem}}" target="_blank"><i class="bi bi-whatsapp" style="font-size: 1.5rem; color: green;"></i></a>
+                                            </span>
+                                            <span class="">
+                                                <a href="{% url 'loginapp:alterar_status' pk=c.pk %}"><i class="bi bi-check2-square" style="font-size: 1.5rem; color: green;"></i></a>
+                                            </span>
+                                        </td>
+                                    </tr> 
+                                {% endif %} 
+                            {% endfor %} 
+                        {% else %}
+                            <h3 style="text-align: center;">Não tem chamados</h3>
+                        {% endif %}
+                    </table>
+                </p>
+            </div>
+        </div>
+
+        <h1 class="mt-2">Últimos 50 Chamados Encerrados</h1>
+        <div class="card mb-4 ">
+            <div class="card-body ">
+                <p class="mb-0"> 
+                    <table class="w3-table-all w3-hoverable w3-card-4">
+                        {% csrf_token %}
+                        <tr>
+                            <th>ID</th>
+                            <th>Telefone</th>
+                            <th>Mensagem</th>
+                            <th>Status</th>
+                            <th>Botões</th>
+                        </tr>
+                        {% for c in chamado_fechado %}
+                                {% if c.telefone is None %}
+                                    <h3>Não tem chamados</h3>
+                                {% elif c.encerrado is True %}
+                                    <tr align="center">
+                                        <td>{{c.id}}</td>
+                                        <td>{{c.telefone}}</td>
+                                        <td>{{c.mensagem}}</td>
+                                        <td>{{c.status}}</td>
+                                        <td align="center" style="white-space: nowrap;">
+                                            <span>
+                                                <a href="https://api.whatsapp.com/send?phone={{c.telefone}}&text={{c.mensagem}}" target="_blank"><i class="bi bi-whatsapp" style="font-size: 1.5rem; color: green;"></i></a>
+                                            </span>
+                                        </td>
+                                    </tr> 
+                                {% endif %} 
+                            
+                        {% endfor %} 
+                    </table>
+                </p>
+            </div>
+        </div>
+
+       
+{% endblock %}
